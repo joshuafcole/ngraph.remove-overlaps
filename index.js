@@ -1,7 +1,5 @@
-module.exports = removeOverlaps;
-
 function removeOverlaps(layout, options) {
-  if (!layout) throw new Error('layout argument is required');
+  if (!layout) throw new Error("layout argument is required");
 
   // This variable is used during iteration over quadTree
   var currentNode = {
@@ -9,14 +7,14 @@ function removeOverlaps(layout, options) {
     height: 0,
     x: 0,
     y: 0,
-    body: null
+    body: null,
   };
 
   options = options || {};
 
   var defaultSize = options.defaultSize || {
     width: 20,
-    height: 20
+    height: 20,
   };
 
   var active = options.active !== undefined ? options.active : false;
@@ -28,9 +26,9 @@ function removeOverlaps(layout, options) {
   var graph = layout.graph;
 
   if (active) {
-    layout.on('step', step);
-    layout.on('disposed', dispose);
-    layout.on('stable', removeAll);
+    layout.on("step", step);
+    layout.on("disposed", dispose);
+    layout.on("stable", removeAll);
   } else {
     removeAll();
   }
@@ -40,9 +38,9 @@ function removeOverlaps(layout, options) {
   return dispose;
 
   function dispose() {
-    layout.off('step', step);
-    layout.off('stable', removeAll);
-    layout.off('disposed', dispose);
+    layout.off("step", step);
+    layout.off("stable", removeAll);
+    layout.off("disposed", dispose);
   }
 
   function removeAll() {
@@ -60,7 +58,7 @@ function removeOverlaps(layout, options) {
     var root = tree.getRoot();
     totalMovement = 0;
 
-    layout.forEachBody(function(body, graphNodeId) {
+    layout.forEachBody(function (body, graphNodeId) {
       var graphNode = graph.getNode(graphNodeId);
 
       currentNode.width = getWidth(graphNode.data);
@@ -82,7 +80,7 @@ function removeOverlaps(layout, options) {
       totalMovement += moveIfNeeded(body);
     } else {
       // we only continue subdividing the tree if current node intersects the quad
-      return intersectQuad(quad)
+      return intersectQuad(quad);
     }
   }
 
@@ -102,11 +100,15 @@ function removeOverlaps(layout, options) {
       x: body.pos.x,
       y: body.pos.y,
       width: getWidth(node.data),
-      height: getHeight(node.data)
-    }
+      height: getHeight(node.data),
+    };
 
-    var ox = Math.min(a.x + a.width / 2, b.x + b.width / 2) - Math.max(a.x - a.width / 2, b.x - b.width / 2);
-    var oy = Math.min(a.y + a.height / 2, b.y + b.height / 2) - Math.max(a.y - a.height / 2, b.y - b.height / 2);
+    var ox =
+      Math.min(a.x + a.width / 2, b.x + b.width / 2) -
+      Math.max(a.x - a.width / 2, b.x - b.width / 2);
+    var oy =
+      Math.min(a.y + a.height / 2, b.y + b.height / 2) -
+      Math.max(a.y - a.height / 2, b.y - b.height / 2);
 
     if (ox > 0 && oy > 0) {
       var totalMovement = move(ox, oy, a, b);
@@ -115,6 +117,9 @@ function removeOverlaps(layout, options) {
 
       body.pos.x = b.x;
       body.pos.y = b.y;
+
+      physicsSimulator.quadTree.updateBodyForce(a.body);
+      physicsSimulator.quadTree.updateBodyForce(body);
 
       return totalMovement;
     }
@@ -127,8 +132,8 @@ function removeOverlaps(layout, options) {
     // so boxes can cross each other rather than collide
     // this makes the result more predictable
 
-    var vx0 = (a.x + a.width / 2) - (b.x + b.width / 2);
-    var vy0 = (a.y + a.height / 2) - (b.y + b.width / 2),
+    var vx0 = a.x + a.width / 2 - (b.x + b.width / 2);
+    var vy0 = a.y + a.height / 2 - (b.y + b.width / 2),
       v0 = Math.sqrt(vx0 * vx0 + vy0 * vy0),
       shift = Math.sqrt(ox * oy),
       shiftX,
@@ -164,14 +169,22 @@ function removeOverlaps(layout, options) {
 
     // Continue subdivision only if current rectangle intersects our quad
     // http://stackoverflow.com/questions/306316/determine-if-two-rectangles-overlap-each-other
-    return left < quad.max_x && right > quad.min_x && top < quad.max_y && bottom > quad.min_y;
-}
+    return (
+      left < quad.max_x &&
+      right > quad.min_x &&
+      top < quad.max_y &&
+      bottom > quad.min_y
+    );
+  }
 
-function traverse(quad, visitor) {
-  if (visitor(quad)) {
-    if (quad.quad0) traverse(quad.quad0, visitor)
-    if (quad.quad1) traverse(quad.quad1, visitor)
-    if (quad.quad2) traverse(quad.quad2, visitor)
-    if (quad.quad3) traverse(quad.quad3, visitor)
+  function traverse(quad, visitor) {
+    if (visitor(quad)) {
+      if (quad.quad0) traverse(quad.quad0, visitor);
+      if (quad.quad1) traverse(quad.quad1, visitor);
+      if (quad.quad2) traverse(quad.quad2, visitor);
+      if (quad.quad3) traverse(quad.quad3, visitor);
+    }
   }
 }
+
+export default removeOverlaps;
