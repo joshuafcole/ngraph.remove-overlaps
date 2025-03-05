@@ -164,11 +164,7 @@ function removeOverlaps(layout, options) {
 
     // Continue subdivision only if current rectangle intersects our quad
     // http://stackoverflow.com/questions/306316/determine-if-two-rectangles-overlap-each-other
-    return left < quad.right &&
-      right > quad.left &&
-      top < quad.bottom &&
-      bottom > quad.top;
-  }
+    return left < quad.max_x && right > quad.min_x && top < quad.max_y && bottom > quad.min_y;
 }
 
 function traverse(quad, visitor) {

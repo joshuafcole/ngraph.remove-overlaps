@@ -21,8 +21,8 @@
     "url": "https://github.com/anvaka/ngraph.remove-overlaps"
   },
   "devDependencies": {
-    "ngraph.forcelayout": "0.1.1",
-    "ngraph.graph": "0.0.12",
+    "ngraph.forcelayout": "^3.3.0",
+    "ngraph.graph": "^20.0.1",
     "ngraph.svg": "0.0.15",
     "tap": "^5.7.1"
   }
