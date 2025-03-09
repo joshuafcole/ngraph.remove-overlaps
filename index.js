@@ -99,8 +99,8 @@ function removeOverlaps(layout, options) {
     var b = {
       x: body.pos.x,
       y: body.pos.y,
-      width: getWidth(node.data),
-      height: getHeight(node.data),
+      width: getWidth(node?.data),
+      height: getHeight(node?.data),
     };
 
     var ox =
